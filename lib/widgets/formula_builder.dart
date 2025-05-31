@@ -137,9 +137,10 @@ class _FormulaBuilderState extends State<FormulaBuilder> with TickerProviderStat
   }
 
   Widget _buildContent(ThemeData theme) {
-    return Form(
-      key: _formKey,
-      child: Column(
+    return SingleChildScrollView( // Wrap the Form with SingleChildScrollView
+      child: Form(
+        key: _formKey,
+        child: Column(
         children: [
           // En-tête avec informations de base
           Container(
@@ -780,12 +781,13 @@ class _ConditionDialogState extends State<ConditionDialog> {
       child: Container(
         constraints: const BoxConstraints(maxWidth: 600),
         padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Condition SI/ALORS',
+        child: SingleChildScrollView( // Wrap the Column with SingleChildScrollView
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'Condition SI/ALORS',
               style: theme.textTheme.headlineSmall!.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -892,6 +894,7 @@ class _ConditionDialogState extends State<ConditionDialog> {
             ),
           ],
         ),
+        ), // Close SingleChildScrollView
       ),
     );
   }

@@ -511,10 +511,33 @@ class _FormulasPageState extends State<FormulasPage> with TickerProviderStateMix
   }
 
   void _showFormulaBuilder(BuildContext context, {Formula? formula}) {
+    // Combine regular variables with variables derived from other formulas
+    List<Variable> allAvailableVariables = List.from(_variables);
+
+    for (final existingFormula in _formulas) {
+      // Avoid adding the formula being edited as a variable to itself
+      if (formula != null && existingFormula.id == formula.id) {
+        continue;
+      }
+      allAvailableVariables.add(
+        Variable(
+          id: 'formula_${existingFormula.name}', // Ensure unique ID, prefix with 'formula_'
+          name: existingFormula.name,
+          type: VariableType.result,
+          displayName: existingFormula.name,
+          description: 'Résultat de la formule "${existingFormula.name}"',
+          isDisplayed: true, // Should be displayed as a selectable chip
+          // defaultValue and choices are not applicable for VariableType.result
+        ),
+      );
+    }
+
+    // Prevent opening builder if there are no input variables to build a formula
+    // Formula results alone are not sufficient to build new formulas without other inputs.
     if (_variables.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: const Text('Vous devez d\'abord créer des variables'),
+          content: const Text('Vous devez d\'abord créer des variables de type nombre, texte etc.'),
           backgroundColor: Theme.of(context).colorScheme.error,
         ),
       );
@@ -524,7 +547,7 @@ class _FormulasPageState extends State<FormulasPage> with TickerProviderStateMix
     showDialog(
       context: context,
       builder: (context) => FormulaBuilder(
-        availableVariables: _variables,
+        availableVariables: allAvailableVariables, // Pass the augmented list
         initialFormula: formula,
         onFormulaSaved: (savedFormula) async {
           if (formula == null) {

@@ -1,7 +1,8 @@
 import 'dart:convert';
 
-enum VariableType { number, string, boolean, choice }
+enum VariableType { number, string, boolean, choice, result }
 
+// Test comment
 class Variable {
   final String id;
   final String name;
@@ -81,6 +82,8 @@ class Variable {
         return value?.toString() ?? '0';
       case VariableType.string:
         return value?.toString() ?? '';
+      case VariableType.result: // Added
+        return value?.toString() ?? ''; // Or more sophisticated display logic if needed
     }
   }
 
@@ -93,6 +96,10 @@ class Variable {
       case VariableType.choice:
         return choices.contains(input) ? input : (choices.isNotEmpty ? choices.first : '');
       case VariableType.string:
+        return input;
+      case VariableType.result: // Added
+        // Result variables are typically not parsed from string input directly by users
+        // but if they were, it might be a number or string. Defaulting to string.
         return input;
     }
   }
@@ -107,6 +114,11 @@ class Variable {
         return choices.contains(value.toString());
       case VariableType.string:
         return value is String;
+      case VariableType.result: // Added
+        // Result variables can be of any type that a formula can output.
+        // For now, let's assume they are valid if they are not null.
+        // This might need refinement based on how result types are determined.
+        return value != null;
     }
   }
 }
